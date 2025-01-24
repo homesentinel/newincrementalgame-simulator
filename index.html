@@ -562,6 +562,15 @@
           <input class="form-check-input" id="searchClearChallenge" type="checkbox" v-model="searchClearChallenge">
           <label class="form-check-label" for="searchClearChallenge">達成済みも探索</label>
         </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" id="useGenAutoBuy" type="checkbox" v-model="challengeConfig.useGenAutoBuy">
+          <label class="form-check-label" for="useGenAutoBuy">発生機自動購入器を使う</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" id="useAccAutoBuy" type="checkbox" v-model="challengeConfig.useAccAutoBuy">
+          <label class="form-check-label" for="useAccAutoBuy">時間加速器自動購入器を使う</label>
+        </div>
+
       </div>
       <nav>
         <div class="nav nav-tabs" id="challengeTab" role="tablist">

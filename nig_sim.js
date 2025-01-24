@@ -334,10 +334,12 @@ class MaximumBonuses {
     constructor() {
         this.cache = new Map();
     };
-    static maximumBonuses(maxToken, rank, onChallenge) {
+    static maximumBonuses(maxToken, rank, onChallenge, useGenAutoBuy=false, useAccAutoBuy=false) {
         const effectiveChallengeBonuses = rank ? [3, 4, 6, 7, 9, 10, 11, 13] : [2, 3, 6, 7, 10, 11, 13];
         const m = 1 << effectiveChallengeBonuses.length;
         if (!rank && onChallenge) maxToken = Math.max(maxToken - 8, 0);
+        if(!rank && useGenAutoBuy) maxToken = Math.max(maxToken - 8, 0);
+        if(!rank && useAccAutoBuy) maxToken = Math.max(maxToken - 16, 0);
         let costs = new Array(m).fill(0);
         let challengeBonusesCandidates = [];
         for (let i = 0; i < m; i++) {
@@ -364,11 +366,11 @@ class MaximumBonuses {
         return challengeBonusesCandidates;
     }
 
-    get(maxToken, rank, onChallenge) {
+    get(maxToken, rank, onChallenge, useGenAutoBuy=false, useAccAutoBuy=false) {
         const key = { maxToken: maxToken, rank: rank, onChallenge: onChallenge };
         let res = this.cache.get(key);
         if (res === undefined) {
-            res = MaximumBonuses.maximumBonuses(maxToken, rank, onChallenge);
+            res = MaximumBonuses.maximumBonuses(maxToken, rank, onChallenge, useGenAutoBuy, useAccAutoBuy);
             this.cache.set(key, res);
         }
         return res;
@@ -2067,7 +2069,7 @@ class Nig {
             ? Array.from(new Array(this.player.accelLevel + 1).keys())
             : [this.player.accelLevelUsed];
         let challengeBonusesCandidates = config.searchChallengeBonuses
-            ? mbCache.get(this.player.challengeCleared.length, false, true)
+            ? mbCache.get(this.player.challengeCleared.length, false, true, config.useGenAutoBuy, config.useAccAutoBuy)
             : [new Array(15).fill(null).map((_, i) => i).filter(i => this.player.challengeBonuses[i])];
         let rankChallengeBonusesCandidates = config.searchRankChallengeBonuses
             ? mbCache.get(this.player.rankChallengeCleared.length, true, true)
@@ -2191,6 +2193,8 @@ const app = Vue.createApp({
                 searchRankChallengeBonuses: true,
                 searchAccelLevel: true,
                 toggleBonuses: true,
+                useGenAutoBuy: false,
+                useAccAutoBuy: false,
             },
             searchClearChallenge: true,
             autoSimulateCheckpoints: false,
